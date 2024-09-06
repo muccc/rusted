@@ -1,0 +1,22 @@
+#!/usr/bin/env expect
+
+set timeout 30
+
+lassign $argv user passfile host
+
+# read password from file and trim possible newline at the end
+set pass [string trimright [read [open "$passfile"]] "\n"]
+
+log_user 0
+
+spawn ssh "$user@$host" \
+  -o PubkeyAuthentication=no \
+  -o PasswordAuthentication=yes \
+  /export
+
+expect "$user@$host's password: "
+send "$pass\r"
+
+log_user 1
+
+expect eof
