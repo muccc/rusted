@@ -20,15 +20,17 @@
     };
   };
 
-  outputs = {
-    self,
-    advisory-db,
-    crane,
-    nixpkgs,
-    utils,
-    ...
-  }:
-    utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      advisory-db,
+      crane,
+      nixpkgs,
+      utils,
+      ...
+    }:
+    utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs { inherit system; };
 
@@ -37,7 +39,8 @@
         src = craneLib.cleanCargoSource ./.;
 
         cargoArtifacts = craneLib.buildDepsOnly {
-          inherit src; pname = "rusted-deps";
+          inherit src;
+          pname = "rusted-deps";
         };
 
         rusted = craneLib.buildPackage {
@@ -58,7 +61,7 @@
           rusted-audit = craneLib.cargoAudit { inherit src cargoArtifacts advisory-db; };
         };
 
-        packages.default = pkgs.runCommandLocal "rusted" {} ''
+        packages.default = pkgs.runCommandLocal "rusted" { } ''
           mkdir -vp $out/{bin,etc/systemd/system}
           ln -sf ${rusted}/bin/rusted $out/bin/rusted
           cp -v ${./etc}/rusted.{service,timer} $out/etc/systemd/system
