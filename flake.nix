@@ -61,12 +61,23 @@
           rusted-audit = craneLib.cargoAudit { inherit src cargoArtifacts advisory-db; };
         };
 
-        packages.default = pkgs.runCommandLocal "rusted" { } ''
-          mkdir -vp $out/{bin,etc/systemd/system}
-          ln -sf ${rusted}/bin/rusted $out/bin/rusted
-          cp -v ${./etc}/rusted.{service,timer} $out/etc/systemd/system
-          cp -vr ${./expect_scripts} $out/expect_scripts
-        '';
+        packages.default = pkgs.stdenv.mkDerivation {
+          name = "rusted";
+
+          dontUnpack = true;
+          dontConfigure = true;
+          dontBuild = true;
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+
+          installPhase = ''
+            mkdir -vp $out/{bin,etc/systemd/system}
+            ln -sf ${rusted}/bin/rusted $out/bin/rusted
+            wrapProgram "$out/bin/rusted" \
+              --prefix PATH ":" "${pkgs.lib.makeBinPath [ pkgs.expect ]}"
+            cp -v ${./etc}/rusted.{service,timer} $out/etc/systemd/system
+            cp -vr ${./expect_scripts} $out/expect_scripts
+          '';
+        };
 
         apps.default = utils.lib.mkApp { drv = packages.default; };
 
