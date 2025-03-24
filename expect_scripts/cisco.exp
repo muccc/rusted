@@ -28,6 +28,8 @@ expect {
     exp_continue
    }
   "$promptname#" {
+    send -- "terminal length 0\r"
+    expect "$promptname#"
     send -- "show running-config\r"
   }
 }
