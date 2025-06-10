@@ -1,4 +1,4 @@
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use core::str::from_utf8;
 use regex::Regex;
 use serde::Deserialize;
@@ -84,7 +84,7 @@ impl DeviceConfig {
 
         // expect script with parameters
         let mut cmd = Command::new(&script_path);
-        cmd.args(self.into_expect_args())
+        cmd.args(self.clone().into_expect_args())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
 
@@ -155,7 +155,7 @@ impl DeviceConfig {
                 // replace patterns from `replacement_patterns`
                 .map(|line| {
                     let mut line = line.to_owned();
-                    for &(ref regex, ref replacement) in &replacements {
+                    for (regex, replacement) in &replacements {
                         line = regex.replace_all(&line, replacement).to_string();
                     }
                     line

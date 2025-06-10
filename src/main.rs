@@ -1,6 +1,6 @@
 mod devices;
 
-use anyhow::{anyhow, bail, Context, Error, Result};
+use anyhow::{Context, Error, Result, anyhow, bail};
 use clap::Parser;
 use core::str::from_utf8;
 use devices::DeviceConfig;
@@ -10,7 +10,7 @@ use std::path::Path;
 use std::process::{Command, Stdio};
 use tokio::runtime::Runtime;
 use tracing::{debug, error, info};
-use tracing_subscriber::{filter::LevelFilter, EnvFilter};
+use tracing_subscriber::{EnvFilter, filter::LevelFilter};
 
 /// rusted config, command line parameter parsing is done using `clap_derive`
 #[derive(Parser, Debug)]
@@ -49,7 +49,6 @@ fn init_tracing() -> Result<()> {
         .context("failed to set global default tracing subscriber")
 }
 
-///
 async fn update_device_config_file(
     device_nr: usize,
     device: DeviceConfig,
