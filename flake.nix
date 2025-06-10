@@ -40,7 +40,7 @@
 
         cargoArtifacts = craneLib.buildDepsOnly {
           inherit src;
-          pname = "rusted-deps";
+          pname = "rusted";
         };
 
         rusted = craneLib.buildPackage {
