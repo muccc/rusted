@@ -95,7 +95,7 @@ impl DeviceConfig {
             .with_context(|| format!("failed to run expect script {script_path}"))?;
         let output = child.wait_with_output().await?;
 
-        if !output.status.success() {
+        if !output.status.success() || output.stdout.is_empty() {
             bail!(
                 "expect script failed {script_path}:\n{}",
                 from_utf8(&output.stderr).unwrap_or("<invalid utf8>")
