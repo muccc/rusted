@@ -21,7 +21,7 @@ send "$pass\r"
 
 expect {
   "$promptname#" {
-    send -- "show running-config\r"
+    send -- "show running-config no-encrypt\r"
   }
 }
 
